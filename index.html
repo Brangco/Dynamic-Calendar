@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Dynamic Calendar</title>
+    <link rel="stylesheet" href="main.css" />
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+</head>
+<body>
+    <div class="calendar">
+        <div class="header">
+            <button id="prevBtn">
+                <ion-icon name="chevron-back-outline"></ion-icon>
+            </button>
+            <div class="monthYear" id="monthYear"></div>
+            <button id="nextBtn">
+                <ion-icon name="chevron-forward-outline"></ion-icon>
+            </button>
+        </div>
+
+        <div class="days">
+            <div class="day">Sun</div>
+            <div class="day">Mon</div>
+            <div class="day">Tue</div>
+            <div class="day">Wed</div>
+            <div class="day">Thu</div>
+            <div class="day">Fri</div>
+            <div class="day">Sat</div>
+        </div>
+
+        <div class="dates" id="datesContainer"></div>
+        <div id="dateContainer">
+        <p class="date" data-date="8 March">8th March</p>
+        <p class="date" data-date="25 December">25th December</p>
+        <p class="date" data-date="29 December">29th December</p>
+        <p class="date" data-date="1 January">1st January</p>
+        
+        <!-- This is where the message will show -->
+        <div id="messageContainer"></div>
+        </div>
+
+
+    </div>
+
+    <script>
+        const monthYear = document.getElementById("monthYear");
+        const datesContainer = document.getElementById("datesContainer");
+        const prevBtn = document.getElementById("prevBtn");
+        const nextBtn = document.getElementById("nextBtn");
+
+        let currentDate = new Date();
+
+        const renderCalendar = () => {
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+            const firstDay = new Date(year, month, 1).getDay();
+            const lastDate = new Date(year, month + 1, 0).getDate();
+
+            const months = [
+                "January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"
+            ];
+
+            const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+            monthYear.textContent = `${months[month]} ${year}`;
+            datesContainer.innerHTML = "";
+
+            const ul = document.createElement("ul");
+            let totalCells = firstDay + lastDate;
+            for (let i = 0; i < totalCells; i++) {
+                const li = document.createElement("li");
+                if (i >= firstDay) {
+                    li.textContent = i - firstDay + 1;
+                } else {
+                    li.textContent = "";
+                }
+                ul.appendChild(li);
+
+                // Wrap every 7 days in a new row
+                if ((i + 1) % 7 === 0) {
+                    datesContainer.appendChild(ul.cloneNode(true));
+                    ul.innerHTML = "";
+                }
+            }
+
+            if (ul.children.length > 0) {
+                datesContainer.appendChild(ul); 
+                // append remaining days
+            }
+        };
+
+        prevBtn.addEventListener("click", () => {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            renderCalendar();
+        });
+
+        nextBtn.addEventListener("click", () => {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            renderCalendar();
+        });
+
+        renderCalendar();
+    </script>
+
+    <script>
+  // Define the messages for each date
+  const dateMessages = {
+    "8 March": "It's your Birth Bogame Ch Marak",
+    "25 December": "Christmas Day.",
+    "29 December": "Nengminza Birth Day .",
+    "1 January": "New Year's Day."
+  };
+
+  // Get all clickable date elements
+  const dateElements = document.querySelectorAll('.date');
+
+  // Message display container
+  const messageContainer = document.getElementById('messageContainer');
+
+  // Attach click event to each date
+  dateElements.forEach(dateElement => {
+    dateElement.style.cursor = 'pointer'; // optional styling
+    dateElement.addEventListener('click', function () {
+      const dateKey = dateElement.getAttribute('data-date');
+      const message = dateMessages[dateKey] || "No message for this date.";
+      messageContainer.textContent = message;
+    });
+  });
+</script>
+
+
+</body>
+</html>
